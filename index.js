@@ -1,8 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
 const path = require("path");
 
 const userRoutes = require("./routes/userRoutes");
+const { checkForAuthCookie } = require("./middleware/auth");
 
 const app = express();
 const PORT = 8000;
@@ -15,14 +17,18 @@ mongoose
 
 // middleware
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // set view engine
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 // routes
-app.get("/", (req, res) => {
-  return res.render("home");
+app.get("/", checkForAuthCookie("token"), (req, res) => {
+  console.log(req.user);
+  return res.render("home", {
+    user: req.user,
+  });
 });
 
 app.use("/user", userRoutes);
