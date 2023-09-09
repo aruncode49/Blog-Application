@@ -5,7 +5,25 @@
     <title>Home Page</title>
   </head>
   <body>
-    <%- include('partials/nav') %> <%= JSON.stringify(user) %> <%-
-    include('partials/script') %>
+    <%- include('partials/nav') %>
+
+    <!-- Blog Cards -->
+    <div class="container mt-4">
+      <% blog.forEach(blog => { %>
+      <div class="card" style="width: 18rem">
+        <img
+          style="max-height: 180px; object-fit: cover; overflow: hidden"
+          src="<%= blog.coverImageURL %>"
+          class="card-img-top"
+        />
+        <div class="card-body">
+          <h5 class="card-title"><%= blog.title %></h5>
+          <a href="/blog/<%=blog._id %>" class="btn btn-primary">Read</a>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+
+    <%- include('partials/script') %>
   </body>
 </html>

@@ -5,6 +5,8 @@ const path = require("path");
 
 const userRoutes = require("./routes/userRoutes");
 const blogRoutes = require("./routes/blog");
+
+const Blog = require("./models/blog");
 const { checkForAuthCookie } = require("./middleware/auth");
 
 const app = express();
@@ -20,15 +22,17 @@ mongoose
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(checkForAuthCookie("token"));
+app.use(express.static(path.resolve("./public")));
 
 // set view engine
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 // routes
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+  const allBlogs = await Blog.find();
   return res.render("home", {
-    user: req.user,
+    blog: allBlogs,
   });
 });
 
