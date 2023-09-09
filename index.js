@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 
 const userRoutes = require("./routes/userRoutes");
+const blogRoutes = require("./routes/blog");
 const { checkForAuthCookie } = require("./middleware/auth");
 
 const app = express();
@@ -18,18 +19,20 @@ mongoose
 // middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(checkForAuthCookie("token"));
 
 // set view engine
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 // routes
-app.get("/", checkForAuthCookie("token"), (req, res) => {
+app.get("/", (req, res) => {
   return res.render("home", {
     user: req.user,
   });
 });
 
 app.use("/user", userRoutes);
+app.use("/blog", blogRoutes);
 
 app.listen(PORT, () => console.log(`Server Started at Port ${PORT}`));
