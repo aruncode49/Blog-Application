@@ -1,6 +1,8 @@
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcrypt");
 
+const { createTokenForUser } = require("../services/auth");
+
 const userSchema = new Schema(
   {
     fullName: {
@@ -37,13 +39,17 @@ userSchema.pre("save", async function (next) {
 });
 
 // Create a static function to find the user inside the database for signin
-userSchema.statics.matchUser = async function (email, password) {
+userSchema.statics.matchUserAndGenerateToken = async function (
+  email,
+  password
+) {
   const user = await this.findOne({ email });
 
   if (user) {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (isPasswordMatch) {
-      return user;
+      const token = createTokenForUser(user);
+      return token;
     }
     throw Error("Incorrect Password!");
   }
