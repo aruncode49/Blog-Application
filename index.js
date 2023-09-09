@@ -25,7 +25,6 @@ app.set("views", path.resolve("./views"));
 
 // routes
 app.get("/", checkForAuthCookie("token"), (req, res) => {
-  console.log(req.user);
   return res.render("home", {
     user: req.user,
   });
